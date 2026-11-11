@@ -1,0 +1,106 @@
+{
+ "state": {
+  "started_utc": "2026-11-11T23:38:55.779316+00:00",
+  "started_local": "Thu 12 Nov 2026, 10:38 AM AEDT",
+  "started_et": "Wed 11 Nov 2026, 06:38 PM ET",
+  "local_tz": "Australia/Melbourne",
+  "first_session": "2026-11-12",
+  "universe": [
+   "NVDA",
+   "AVGO",
+   "ADBE",
+   "PLTR",
+   "META",
+   "MSFT",
+   "NFLX",
+   "V",
+   "INTU",
+   "CVX",
+   "LLY",
+   "XOM",
+   "QCOM",
+   "TXN",
+   "MA",
+   "UNP",
+   "AAPL",
+   "CAT",
+   "AMD",
+   "CRM"
+  ]
+ },
+ "start_cash": 100000.0,
+ "journal": [],
+ "baseline_date": "2026-11-11",
+ "open_positions": [],
+ "cash": {
+  "long_term": 59580.0,
+  "short_term": 39720.0
+ },
+ "queued": [
+  "BUY AMD (long-term)",
+  "BUY TXN (long-term)",
+  "BUY XOM (long-term)",
+  "BUY CVX (long-term)",
+  "BUY UNP (long-term)",
+  "BUY AAPL (long-term)"
+ ],
+ "closed_trades": [],
+ "equity": [
+  [
+   "2026-11-11",
+   99300.0
+  ]
+ ],
+ "bench": [
+  [
+   "2026-11-11",
+   100000.0
+  ]
+ ],
+ "bench_close": 759.8099975585938,
+ "fx_fee": 700.0,
+ "cost_preset": "au_flat_fee",
+ "updated_utc": "2026-11-11T23:46:28.683665+00:00",
+ "readiness": [
+  {
+   "day": 1,
+   "title": "System check",
+   "question": "Did it trade on real prices and charge fees?",
+   "status": "pending",
+   "checks": [],
+   "date": null
+  },
+  {
+   "day": 5,
+   "title": "Behaviour check",
+   "question": "Following the rules without blowing up?",
+   "status": "pending",
+   "checks": [],
+   "date": null
+  },
+  {
+   "day": 10,
+   "title": "Early performance",
+   "question": "Not falling badly behind the market?",
+   "status": "pending",
+   "checks": [],
+   "date": null
+  },
+  {
+   "day": 20,
+   "title": "First month",
+   "question": "On pace for 1%/month, or ahead of SPY?",
+   "status": "pending",
+   "checks": [],
+   "date": null
+  },
+  {
+   "day": 60,
+   "title": "Real-money gate",
+   "question": "About 3 months in: enough evidence to try a SMALL real amount?",
+   "status": "pending",
+   "checks": [],
+   "date": null
+  }
+ ]
+}

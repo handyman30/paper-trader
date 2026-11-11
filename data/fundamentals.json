@@ -1,0 +1,452 @@
+{
+ "AAPL": {
+  "returnOnEquity": 1.42257,
+  "profitMargins": 0.27604,
+  "revenueGrowth": 0.117,
+  "debtToEquity": 84.286,
+  "forwardPE": 33.70319,
+  "freeCashflow": 105658376192,
+  "_date": "2026-11-12"
+ },
+ "MSFT": {
+  "returnOnEquity": 0.34221,
+  "profitMargins": 0.41169998,
+  "revenueGrowth": 0.188,
+  "debtToEquity": 28.465,
+  "forwardPE": 21.537926,
+  "freeCashflow": 2994125056,
+  "_date": "2026-11-12"
+ },
+ "NVDA": {
+  "returnOnEquity": 1.17211,
+  "profitMargins": 0.63663,
+  "revenueGrowth": 1.059,
+  "debtToEquity": 16.971,
+  "forwardPE": 10.92035,
+  "freeCashflow": 41809874944,
+  "_date": "2026-11-12"
+ },
+ "AMZN": {
+  "returnOnEquity": 0.27416,
+  "profitMargins": 0.16900998,
+  "revenueGrowth": 0.121,
+  "debtToEquity": 49.681,
+  "forwardPE": 24.411116,
+  "freeCashflow": -34731749376,
+  "_date": "2026-11-12"
+ },
+ "GOOGL": {
+  "returnOnEquity": 0.44286,
+  "profitMargins": 0.50031,
+  "revenueGrowth": 0.247,
+  "debtToEquity": 22.187,
+  "forwardPE": 19.01185,
+  "freeCashflow": -1162499968,
+  "_date": "2026-11-12"
+ },
+ "META": {
+  "returnOnEquity": 0.32264,
+  "profitMargins": 0.31145,
+  "revenueGrowth": 0.261,
+  "debtToEquity": 42.161,
+  "forwardPE": 17.66811,
+  "freeCashflow": 16848499712,
+  "_date": "2026-11-12"
+ },
+ "AVGO": {
+  "returnOnEquity": 0.44245,
+  "profitMargins": 0.42944,
+  "revenueGrowth": 0.855,
+  "debtToEquity": 59.604,
+  "forwardPE": 17.735357,
+  "freeCashflow": 30596499456,
+  "_date": "2026-11-12"
+ },
+ "ORCL": {
+  "returnOnEquity": 0.41192,
+  "profitMargins": 0.2636,
+  "revenueGrowth": 0.296,
+  "debtToEquity": 251.716,
+  "forwardPE": 11.608844,
+  "freeCashflow": -45853626368,
+  "_date": "2026-11-12"
+ },
+ "ADBE": {
+  "returnOnEquity": 0.61902,
+  "profitMargins": 0.28048,
+  "revenueGrowth": 0.129,
+  "debtToEquity": 57.693,
+  "forwardPE": 8.669261,
+  "freeCashflow": 9345125376,
+  "_date": "2026-11-12"
+ },
+ "CRM": {
+  "returnOnEquity": 0.19381,
+  "profitMargins": 0.2199,
+  "revenueGrowth": 0.108,
+  "debtToEquity": 110.417,
+  "forwardPE": 13.612667,
+  "freeCashflow": 17731874816,
+  "_date": "2026-11-12"
+ },
+ "AMD": {
+  "returnOnEquity": 0.1196,
+  "profitMargins": 0.16769,
+  "revenueGrowth": 0.447,
+  "debtToEquity": 13.469,
+  "forwardPE": 31.255884,
+  "freeCashflow": 7357125120,
+  "_date": "2026-11-12"
+ },
+ "QCOM": {
+  "returnOnEquity": 0.52814996,
+  "profitMargins": 0.31605,
+  "revenueGrowth": -0.084,
+  "debtToEquity": 52.604,
+  "forwardPE": 14.46066,
+  "freeCashflow": 9107125248,
+  "_date": "2026-11-12"
+ },
+ "TXN": {
+  "returnOnEquity": 0.39723998,
+  "profitMargins": 0.34252998,
+  "revenueGrowth": 0.277,
+  "debtToEquity": 70.654,
+  "forwardPE": 26.791388,
+  "freeCashflow": 4778625024,
+  "_date": "2026-11-12"
+ },
+ "INTU": {
+  "returnOnEquity": 0.23596,
+  "profitMargins": 0.21289,
+  "revenueGrowth": 0.137,
+  "debtToEquity": 44.34,
+  "forwardPE": 12.724298,
+  "freeCashflow": 6353625088,
+  "_date": "2026-11-12"
+ },
+ "NOW": {
+  "returnOnEquity": 0.11846,
+  "profitMargins": 0.09364,
+  "revenueGrowth": 0.205,
+  "debtToEquity": 64.256,
+  "forwardPE": 21.39808,
+  "freeCashflow": 5754250240,
+  "_date": "2026-11-12"
+ },
+ "JPM": {
+  "returnOnEquity": 0.18013,
+  "profitMargins": 0.34592,
+  "revenueGrowth": 0.102,
+  "debtToEquity": null,
+  "forwardPE": 13.427804,
+  "freeCashflow": null,
+  "_date": "2026-11-12"
+ },
+ "V": {
+  "returnOnEquity": 0.63507,
+  "profitMargins": 0.51203996,
+  "revenueGrowth": 0.132,
+  "debtToEquity": 63.568,
+  "forwardPE": 24.827293,
+  "freeCashflow": 20983375872,
+  "_date": "2026-11-12"
+ },
+ "MA": {
+  "returnOnEquity": 2.31366,
+  "profitMargins": 0.46732,
+  "revenueGrowth": 0.14,
+  "debtToEquity": 355.163,
+  "forwardPE": 28.523016,
+  "freeCashflow": 16629250048,
+  "_date": "2026-11-12"
+ },
+ "BAC": {
+  "returnOnEquity": 0.1073,
+  "profitMargins": 0.28064,
+  "revenueGrowth": 0.034,
+  "debtToEquity": null,
+  "forwardPE": 9.781664,
+  "freeCashflow": null,
+  "_date": "2026-11-12"
+ },
+ "GS": {
+  "returnOnEquity": 0.17712,
+  "profitMargins": 0.31208,
+  "revenueGrowth": 0.233,
+  "debtToEquity": 756.014,
+  "forwardPE": 12.482672,
+  "freeCashflow": null,
+  "_date": "2026-11-12"
+ },
+ "AXP": {
+  "returnOnEquity": 0.35933998,
+  "profitMargins": 0.16823,
+  "revenueGrowth": 0.113,
+  "debtToEquity": 167.573,
+  "forwardPE": 15.983113,
+  "freeCashflow": null,
+  "_date": "2026-11-12"
+ },
+ "UNH": {
+  "returnOnEquity": 0.15773,
+  "profitMargins": 0.03529,
+  "revenueGrowth": -0.004,
+  "debtToEquity": 70.426,
+  "forwardPE": 17.27079,
+  "freeCashflow": 26501249024,
+  "_date": "2026-11-12"
+ },
+ "LLY": {
+  "returnOnEquity": 0.86024004,
+  "profitMargins": 0.31898,
+  "revenueGrowth": 0.386,
+  "debtToEquity": 122.925,
+  "forwardPE": 28.43931,
+  "freeCashflow": 9343699968,
+  "_date": "2026-11-12"
+ },
+ "JNJ": {
+  "returnOnEquity": 0.20018,
+  "profitMargins": 0.16203,
+  "revenueGrowth": 0.059,
+  "debtToEquity": 54.767,
+  "forwardPE": 24.126686,
+  "freeCashflow": 18501875712,
+  "_date": "2026-11-12"
+ },
+ "ABBV": {
+  "returnOnEquity": null,
+  "profitMargins": 0.15666,
+  "revenueGrowth": 0.103,
+  "debtToEquity": null,
+  "forwardPE": 18.21097,
+  "freeCashflow": 17693124608,
+  "_date": "2026-11-12"
+ },
+ "MRK": {
+  "returnOnEquity": 0.05057,
+  "profitMargins": 0.03641,
+  "revenueGrowth": 0.047,
+  "debtToEquity": 119.928,
+  "forwardPE": 16.387983,
+  "freeCashflow": 14024250368,
+  "_date": "2026-11-12"
+ },
+ "TMO": {
+  "returnOnEquity": 0.13379,
+  "profitMargins": 0.14935,
+  "revenueGrowth": 0.091,
+  "debtToEquity": 75.362,
+  "forwardPE": 25.832565,
+  "freeCashflow": 6441625088,
+  "_date": "2026-11-12"
+ },
+ "ISRG": {
+  "returnOnEquity": 0.17932,
+  "profitMargins": 0.25542,
+  "revenueGrowth": 0.217,
+  "debtToEquity": null,
+  "forwardPE": 36.052475,
+  "freeCashflow": 3434800128,
+  "_date": "2026-11-12"
+ },
+ "COST": {
+  "returnOnEquity": 0.28402,
+  "profitMargins": 0.03043,
+  "revenueGrowth": 0.111,
+  "debtToEquity": 28.436,
+  "forwardPE": 43.44583,
+  "freeCashflow": 6752750080,
+  "_date": "2026-11-12"
+ },
+ "WMT": {
+  "returnOnEquity": 0.22313999,
+  "profitMargins": 0.03,
+  "revenueGrowth": 0.059,
+  "debtToEquity": 71.653,
+  "forwardPE": 39.005783,
+  "freeCashflow": 7127625216,
+  "_date": "2026-11-12"
+ },
+ "HD": {
+  "returnOnEquity": 1.0429599,
+  "profitMargins": 0.0841,
+  "revenueGrowth": 0.057,
+  "debtToEquity": 380.261,
+  "forwardPE": 22.07191,
+  "freeCashflow": 10762625024,
+  "_date": "2026-11-12"
+ },
+ "MCD": {
+  "returnOnEquity": null,
+  "profitMargins": 0.32377,
+  "revenueGrowth": 0.011,
+  "debtToEquity": null,
+  "forwardPE": 20.113138,
+  "freeCashflow": 5669749760,
+  "_date": "2026-11-12"
+ },
+ "PG": {
+  "returnOnEquity": 0.29609,
+  "profitMargins": 0.18229,
+  "revenueGrowth": 0.04,
+  "debtToEquity": 70.343,
+  "forwardPE": 22.662365,
+  "freeCashflow": 12652999680,
+  "_date": "2026-11-12"
+ },
+ "KO": {
+  "returnOnEquity": 0.40592998,
+  "profitMargins": 0.28654,
+  "revenueGrowth": 0.074,
+  "debtToEquity": 107.449,
+  "forwardPE": 27.64845,
+  "freeCashflow": 4349000192,
+  "_date": "2026-11-12"
+ },
+ "PEP": {
+  "returnOnEquity": 0.52187,
+  "profitMargins": 0.11091,
+  "revenueGrowth": 0.056,
+  "debtToEquity": 230.716,
+  "forwardPE": 16.693941,
+  "freeCashflow": 9044249600,
+  "_date": "2026-11-12"
+ },
+ "NKE": {
+  "returnOnEquity": 0.21563,
+  "profitMargins": 0.0674,
+  "revenueGrowth": -0.043,
+  "debtToEquity": 73.095,
+  "forwardPE": 24.79986,
+  "freeCashflow": 1766875008,
+  "_date": "2026-11-12"
+ },
+ "TJX": {
+  "returnOnEquity": 0.62171,
+  "profitMargins": 0.09729,
+  "revenueGrowth": 0.054,
+  "debtToEquity": 134.419,
+  "forwardPE": 23.736704,
+  "freeCashflow": 4398125056,
+  "_date": "2026-11-12"
+ },
+ "CAT": {
+  "returnOnEquity": 0.56135,
+  "profitMargins": 0.15212,
+  "revenueGrowth": 0.173,
+  "debtToEquity": 210.413,
+  "forwardPE": 18.656292,
+  "freeCashflow": 3973250048,
+  "_date": "2026-11-12"
+ },
+ "DE": {
+  "returnOnEquity": 0.18242,
+  "profitMargins": 0.10168,
+  "revenueGrowth": 0.049,
+  "debtToEquity": 230.298,
+  "forwardPE": 30.193304,
+  "freeCashflow": 4516250112,
+  "_date": "2026-11-12"
+ },
+ "HON": {
+  "returnOnEquity": 0.44387,
+  "profitMargins": 0.18684,
+  "revenueGrowth": 0.013,
+  "debtToEquity": 76.101,
+  "forwardPE": 23.050587,
+  "freeCashflow": 7022000128,
+  "_date": "2026-11-12"
+ },
+ "GE": {
+  "returnOnEquity": 0.50165004,
+  "profitMargins": 0.17313999,
+  "revenueGrowth": 0.159,
+  "debtToEquity": 115.989,
+  "forwardPE": 36.804222,
+  "freeCashflow": 6332375040,
+  "_date": "2026-11-12"
+ },
+ "UNP": {
+  "returnOnEquity": 0.38747,
+  "profitMargins": 0.28897,
+  "revenueGrowth": 0.153,
+  "debtToEquity": 141.303,
+  "forwardPE": 20.988518,
+  "freeCashflow": 5069624832,
+  "_date": "2026-11-12"
+ },
+ "LMT": {
+  "returnOnEquity": 0.8019,
+  "profitMargins": 0.082320005,
+  "revenueGrowth": 0.113,
+  "debtToEquity": 203.697,
+  "forwardPE": 18.328455,
+  "freeCashflow": 5645499904,
+  "_date": "2026-11-12"
+ },
+ "XOM": {
+  "returnOnEquity": 0.15528,
+  "profitMargins": 0.10463,
+  "revenueGrowth": 0.326,
+  "debtToEquity": 12.568,
+  "forwardPE": 13.38976,
+  "freeCashflow": 28318750720,
+  "_date": "2026-11-12"
+ },
+ "CVX": {
+  "returnOnEquity": 0.13853,
+  "profitMargins": 0.11923,
+  "revenueGrowth": 0.348,
+  "debtToEquity": 16.769,
+  "forwardPE": 12.929642,
+  "freeCashflow": 26048374784,
+  "_date": "2026-11-12"
+ },
+ "NFLX": {
+  "returnOnEquity": 0.53463,
+  "profitMargins": 0.29691,
+  "revenueGrowth": 0.118,
+  "debtToEquity": 59.857,
+  "forwardPE": 17.113281,
+  "freeCashflow": 25475807232,
+  "_date": "2026-11-12"
+ },
+ "TMUS": {
+  "returnOnEquity": 0.19354,
+  "profitMargins": 0.120459996,
+  "revenueGrowth": 0.074,
+  "debtToEquity": 211.32,
+  "forwardPE": 12.076582,
+  "freeCashflow": 16360999936,
+  "_date": "2026-11-12"
+ },
+ "UBER": {
+  "returnOnEquity": 0.123339996,
+  "profitMargins": 0.061300002,
+  "revenueGrowth": 0.096,
+  "debtToEquity": 61.24,
+  "forwardPE": 16.121933,
+  "freeCashflow": 7413499904,
+  "_date": "2026-11-12"
+ },
+ "PLTR": {
+  "returnOnEquity": 0.40907001,
+  "profitMargins": 0.50343,
+  "revenueGrowth": 0.959,
+  "debtToEquity": 1.986,
+  "forwardPE": 67.9069,
+  "freeCashflow": 2652487680,
+  "_date": "2026-11-12"
+ },
+ "TSLA": {
+  "returnOnEquity": 0.03844,
+  "profitMargins": 0.031070001,
+  "revenueGrowth": -0.002,
+  "debtToEquity": 18.295,
+  "forwardPE": 181.00981,
+  "freeCashflow": 4967249920,
+  "_date": "2026-11-12"
+ }
+}
