@@ -99,3 +99,17 @@ swing:
         sec_fee_per_million: 27.80
         finra_taf_per_share: 0.000166
         finra_taf_max: 8.30
+
+# ---- Claude's algo: SAME stocks and SAME buy rules, different exits (fixed up front, not tuned) ----
+claude_exits:
+  long_term:
+    trailing_stop_pct: null
+    atr_trail_mult: 3.0         # chandelier stop: highest high since entry - 3 x ATR(22)
+    atr_period: 22
+  short_term:
+    take_profit_pct: null       # no fixed target...
+    exit_above_sma: 5           # ...sell when the bounce is done (close back above the 5-day average)
+    stop_loss_pct: null
+    atr_stop_mult: 2.5          # stop = entry - 2.5 x ATR(14), scales with each stock's volatility
+    atr_period: 14
+    max_hold_days: 10

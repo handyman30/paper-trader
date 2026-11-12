@@ -1,6 +1,7 @@
 """Run several swing variants side by side so you can see what each piece contributes."""
 import copy
 
+from .config import with_claude_exits
 from .swing import run_swing
 
 
@@ -18,6 +19,7 @@ def variant(cfg, **changes):
 def compare(cfg):
     runs = {
         "Your config (60% long / 40% short)": cfg,
+        "Claude's exits (same entries)": with_claude_exits(cfg),
         "Short-term only (+10%/-5%)": variant(cfg, long_term__allocation_pct=0, short_term__allocation_pct=100,
                                               short_term__max_positions=8),
         "Long-term only": variant(cfg, long_term__allocation_pct=100, short_term__allocation_pct=0,
@@ -38,5 +40,15 @@ def compare(cfg):
     print(f"{'SPY buy & hold':38} {any_s['benchmark_cagr_pct']:6.1f} {any_s['benchmark_total_pct']:7.0f} "
           f"{'':6} {any_s['benchmark_months_hit_target_pct']:6.0f} {any_s['benchmark_max_dd_pct']:6.1f}")
     print(f"{'Target (1%/month)':38} {any_s['target_cagr_pct']:6.1f}")
+    def sub(sd, y0, y1):
+        g = 1.0
+        for y in range(y0, y1 + 1):
+            g *= 1 + sd.get(str(y), 0) / 100
+        return (g ** (1 / (y1 - y0 + 1)) - 1) * 100
+    print("\nRobustness: CAGR in two separate periods")
+    print(f"{'':38} {'2016-20':>8} {'2021-26':>8}")
+    for k, s in res.items():
+        print(f"{k:38} {sub(s['yearly_pct'], 2016, 2020):8.1f} {sub(s['yearly_pct'], 2021, 2026):8.1f}")
+    print(f"{'SPY':38} {sub(any_s['benchmark_yearly_pct'], 2016, 2020):8.1f} {sub(any_s['benchmark_yearly_pct'], 2021, 2026):8.1f}")
     print("\nQuality universe used:", ", ".join(any_s["universe"]))
     return res

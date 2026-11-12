@@ -163,8 +163,14 @@ def simulate(cfg: dict, universe: list[str], px: dict, start: str, close_at_end=
     sma200, sma50 = C.rolling(200).mean(), C.rolling(50).mean()
     rsi = rsi_panel(C, s["short_term"]["rsi_period"])
     mom = C.shift(21) / C.shift(252) - 1
+    pc = C.shift(1)
+    tr = pd.concat([H - L, (H - pc).abs(), (L - pc).abs()]).groupby(level=0).max()
+    atr_n = {s[k].get("atr_period", 14) for k in SLEEVES}
+    exit_n = {s[k]["exit_above_sma"] for k in SLEEVES if s[k].get("exit_above_sma")}
     first = int(np.searchsorted(dates, pd.Timestamp(start)))
     dates = dates[max(first - 1, 0):]
+    ATR = {n: tr.rolling(n).mean().loc[dates] for n in atr_n}
+    SMAX = {n: C.rolling(n).mean().loc[dates] for n in exit_n}
     O, H, L, C, Cf, sma200, sma50, rsi, mom = (x.loc[dates] for x in (O, H, L, C, Cf, sma200, sma50, rsi, mom))
 
     slip = s["slippage_bps"] / 1e4
@@ -219,9 +225,15 @@ def simulate(cfg: dict, universe: list[str], px: dict, start: str, close_at_end=
                 fee = order_cost(cm, "buy", qty, price)
                 v["cash"] -= qty * price + fee
                 fees_by_day[d] = fees_by_day.get(d, 0) + fee
-                v["pos"][t] = dict(qty=qty, entry=price, date=d, hw=price, days=0, entry_fee=fee,
-                                   tp=price * (1 + c["take_profit_pct"] / 100) if c.get("take_profit_pct") else None,
-                                   sl=price * (1 - c["stop_loss_pct"] / 100) if c.get("stop_loss_pct") else None)
+                a = ATR[c.get("atr_period", 14)].at[dates[i - 1], t]
+                if c.get("stop_loss_pct"):
+                    stop0 = price * (1 - c["stop_loss_pct"] / 100)
+                elif c.get("atr_stop_mult") and not math.isnan(a):
+                    stop0 = price - c["atr_stop_mult"] * a
+                else:
+                    stop0 = None
+                v["pos"][t] = dict(qty=qty, entry=price, date=d, hw=price, days=0, entry_fee=fee, sl=stop0,
+                                   tp=price * (1 + c["take_profit_pct"] / 100) if c.get("take_profit_pct") else None)
                 fills.append(dict(date=d, side="BUY", ticker=t, sleeve=name, qty=qty, price=price, fee=fee,
                                   reason="entry", pnl=None))
             buys = []
@@ -240,6 +252,12 @@ def simulate(cfg: dict, universe: list[str], px: dict, start: str, close_at_end=
                         ts = p["hw"] * (1 - c["trailing_stop_pct"] / 100)
                         if stop is None or ts > stop:
                             stop, why = ts, "trailing_stop"
+                    if c.get("atr_trail_mult"):
+                        a = ATR[c.get("atr_period", 14)].at[dates[i - 1], t]
+                        if not math.isnan(a):
+                            ts = p["hw"] - c["atr_trail_mult"] * a
+                            if stop is None or ts > stop:
+                                stop, why = ts, "atr_trailing_stop"
                     if stop and o <= stop:
                         close(name, t, o * (1 - slip), d, why)
                     elif stop and l <= stop:
@@ -252,12 +270,19 @@ def simulate(cfg: dict, universe: list[str], px: dict, start: str, close_at_end=
                         close(name, t, cl * (1 - slip), d, "time_stop")
                     else:
                         p["hw"] = max(p["hw"], h)
+                        p["cur_stop"] = stop
 
         eq.append((d, sum(sleeve_eq(v, i) for v in sl.values())))
 
         # 3) signals at today's close -> next open (skipped on the last available day only in backtests;
         #    in forward mode we keep them as "orders queued for tomorrow")
         uptrend = (C.loc[d] > sma200.loc[d])
+        for name, v in sl.items():
+            n_ = v["cfg"].get("exit_above_sma")
+            if n_:
+                for t in v["pos"]:
+                    if C.at[d, t] > SMAX[n_].at[d, t]:
+                        sells.append((name, t, "bounce_done"))
         month_end = i + 1 < len(dates) and dates[i + 1].month != d.month
         if "long_term" in sl and (month_end or i == 0):
             v, c = sl["long_term"], sl["long_term"]["cfg"]
@@ -288,8 +313,7 @@ def simulate(cfg: dict, universe: list[str], px: dict, start: str, close_at_end=
     open_pos = [dict(sleeve=name, ticker=t, qty=p["qty"], entry_date=str(p["date"].date()), entry=p["entry"],
                      price=float(Cf.at[last, t]), unrealized=p["qty"] * (float(Cf.at[last, t]) - p["entry"]),
                      unrealized_pct=(float(Cf.at[last, t]) / p["entry"] - 1) * 100,
-                     stop=p["sl"] if not sl[name]["cfg"].get("trailing_stop_pct") else
-                     p["hw"] * (1 - sl[name]["cfg"]["trailing_stop_pct"] / 100), target=p["tp"])
+                     stop=p.get("cur_stop", p["sl"]), target=p["tp"])
                 for name, v in sl.items() for t, p in v["pos"].items()]
     if close_at_end:
         for name, v in sl.items():

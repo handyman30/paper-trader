@@ -17,9 +17,15 @@ from .config import ROOT
 from .fundamentals import select_quality
 from .swing import load_daily, simulate
 
-STATE = ROOT / "data" / "forward_state.json"
-JOURNAL = ROOT / "data" / "forward_journal.json"
-NOTES = ROOT / "data" / "forward_notes.json"
+TESTS = {"yours": "Your algo", "claude": "Claude's algo"}
+
+
+def _p(kind: str, name: str):
+    return ROOT / "data" / (f"forward_{kind}.json" if name == "yours" else f"forward_{name}_{kind}.json")
+
+
+def exists(name="yours") -> bool:
+    return _p("state", name).exists()
 NY = ZoneInfo("America/New_York")
 CHECKPOINTS = [1, 5, 10, 20, 60]
 
@@ -40,21 +46,29 @@ def _next_session(now_et: pd.Timestamp) -> pd.Timestamp:
     return d
 
 
-def start(cfg: dict, restart=False) -> dict:
+def start(cfg: dict, restart=False, name="yours") -> dict:
+    STATE, JOURNAL = _p("state", name), _p("journal", name)
     if STATE.exists() and not restart:
         st = json.loads(STATE.read_text())
-        print(f"Forward test already running since {st['started_local']}. Use --restart to start over.")
+        print(f"[{TESTS[name]}] already running since {st['started_local']}. Use --restart to start over.")
         return st
-    s = cfg["swing"]
     now_local = datetime.now(local_tz())
     now_et = pd.Timestamp.now(tz=NY)
-    universe = select_quality(s["universe"], s["top_n_quality"]) if s["fundamental_filter"] else list(s["universe"])
-    st = dict(
+    if name == "claude":  # identical stocks, start date and entries as yours; only the exits differ
+        from .config import with_claude_exits
+        base = json.loads(_p("state", "yours").read_text())
+        cfg = with_claude_exits({**base["config"], "claude_exits": cfg["claude_exits"]})
+        universe, first = base["universe"], base["first_session"]
+    else:
+        s = cfg["swing"]
+        universe = select_quality(s["universe"], s["top_n_quality"]) if s["fundamental_filter"] else list(s["universe"])
+        first = str(_next_session(now_et).date())
+    st = dict(name=name, title=TESTS[name],
         started_utc=now_local.astimezone(ZoneInfo("UTC")).isoformat(),
         started_local=now_local.strftime("%a %d %b %Y, %I:%M %p %Z"),
         started_et=now_et.strftime("%a %d %b %Y, %I:%M %p ET"),
         local_tz=str(local_tz()),
-        first_session=str(_next_session(now_et).date()),
+        first_session=first,
         universe=universe,
         config=copy.deepcopy(cfg),
     )
@@ -63,7 +77,7 @@ def start(cfg: dict, restart=False) -> dict:
     STATE.parent.mkdir(exist_ok=True)
     STATE.write_text(json.dumps(st, indent=1, default=str))
     JOURNAL.unlink(missing_ok=True)
-    print(f"Forward test started {st['started_local']} ({st['started_et']}).")
+    print(f"[{TESTS[name]}] started {st['started_local']} ({st['started_et']}).")
     print(f"First simulated trades at the US open on {st['first_session']}. Universe: {', '.join(universe)}")
     return st
 
@@ -77,7 +91,25 @@ def _complete_bars(px: dict) -> dict:
     return px
 
 
-def update(verbose=True) -> dict | None:
+PRICES = ROOT / "data" / "forward_prices.pkl"
+
+
+def _stable_prices(px: dict) -> dict:
+    """Merge fresh bars into a local snapshot: once a completed day has prices, a later data-feed
+    glitch (missing/NaN row) can't erase or change it. New days and filled gaps are added."""
+    import pickle
+    if PRICES.exists():
+        snap = pickle.loads(PRICES.read_bytes())
+        px = {k: snap[k].combine_first(v) if k in snap else v for k, v in px.items()}
+    try:
+        PRICES.write_bytes(pickle.dumps(px))
+    except OSError:
+        pass  # read-only hosting is fine; snapshot just isn't extended there
+    return px
+
+
+def update(name="yours", verbose=True) -> dict | None:
+    STATE, JOURNAL = _p("state", name), _p("journal", name)
     if not STATE.exists():
         return None
     st = json.loads(STATE.read_text())
@@ -85,7 +117,7 @@ def update(verbose=True) -> dict | None:
     s = cfg["swing"]
     bench = cfg.get("benchmark", "SPY")
     warmup = (pd.Timestamp(st["first_session"]) - pd.Timedelta(days=420)).strftime("%Y-%m-%d")
-    px = _complete_bars(load_daily(sorted(set(st["universe"]) | {bench}), warmup))
+    px = _stable_prices(_complete_bars(load_daily(sorted(set(st["universe"]) | {bench}), warmup)))
     r = simulate(cfg, st["universe"], px, st["first_session"], close_at_end=False)
     eq, b, fees = r["equity"], r["bench"], r["fees_by_day"]
     start_cash = float(s["starting_cash"])
@@ -210,7 +242,7 @@ def readiness(out: dict, cfg: dict) -> list[dict]:
 
 def print_summary(out):
     st = out["state"]
-    print(f"\nForward test · started {st['started_local']} ({st['started_et']})")
+    print(f"\n{st.get('title', 'Forward test')} · started {st['started_local']} ({st['started_et']})")
     print(f"Baseline: {out['baseline_date']} close, ${out['start_cash']:,.0f} · costs: {out['cost_preset']}")
     if not out["journal"]:
         print(f"Waiting for the first US session ({st['first_session']}) to close.")
@@ -247,16 +279,19 @@ def live_marks(out: dict) -> dict | None:
                 spy_today_pct=(float(last["SPY"]) / out["bench_close"] - 1) * 100 if out.get("bench_close") else None)
 
 
-def load_journal() -> dict | None:
-    return json.loads(JOURNAL.read_text()) if JOURNAL.exists() else None
+def load_journal(name="yours") -> dict | None:
+    j = _p("journal", name)
+    return json.loads(j.read_text()) if j.exists() else None
 
 
-def load_notes() -> dict:
-    return json.loads(NOTES.read_text()) if NOTES.exists() else {}
+def load_notes(name="yours") -> dict:
+    n = _p("notes", name)
+    return json.loads(n.read_text()) if n.exists() else {}
 
 
-def save_note(date: str, text: str):
-    notes = load_notes()
+def save_note(date: str, text: str, name="yours"):
+    NOTES = _p("notes", name)
+    notes = load_notes(name)
     if text.strip():
         notes[date] = text.strip()
     else:

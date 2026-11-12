@@ -31,3 +31,12 @@ def assert_paper_only() -> None:
     url = os.getenv("ALPACA_BASE_URL", PAPER_URL).rstrip("/")
     if url != PAPER_URL:
         raise SystemExit(f"Refusing to run: ALPACA_BASE_URL is '{url}', only {PAPER_URL} is allowed.")
+
+
+def with_claude_exits(cfg: dict) -> dict:
+    """Same stocks and entries, Claude's exit rules (config.yaml -> claude_exits)."""
+    import copy
+    c = copy.deepcopy(cfg)
+    for sleeve, over in (cfg.get("claude_exits") or {}).items():
+        c["swing"][sleeve].update(over)
+    return c

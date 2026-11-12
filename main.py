@@ -12,6 +12,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", choices=["backtest", "live", "sweep", "report", "swing", "swing-compare", "swing-live", "forward"])
     ap.add_argument("action", nargs="?", default="update", help="forward: start | update")
+    ap.add_argument("--name", default="yours", choices=["yours", "claude"], help="which forward test")
     ap.add_argument("--restart", action="store_true", help="forward start: discard the current forward test")
     ap.add_argument("--set", nargs="*", default=[], help="override config, e.g. --set entry_rule=rsi dip_pct=1.5")
     args = ap.parse_args()
@@ -54,8 +55,11 @@ def main():
     elif args.mode == "forward":
         from trader import forward
         if args.action == "start":
-            forward.start(cfg, restart=args.restart)
-        forward.update()
+            forward.start(cfg, restart=args.restart, name=args.name)
+            forward.update(args.name)
+        else:
+            for n in forward.TESTS:
+                forward.update(n)
     elif args.mode == "report":
         con = db.connect(cfg["db_path"])
         for rid, mode, started, source, summary in con.execute(
