@@ -1,9 +1,9 @@
 {
  "name": "claude",
  "title": "Claude's algo",
- "started_utc": "2026-11-12T01:42:35.751828+00:00",
- "started_local": "Thu 12 Nov 2026, 12:42 PM AEDT",
- "started_et": "Wed 11 Nov 2026, 08:42 PM ET",
+ "started_utc": "2026-11-15T23:29:26.397495+00:00",
+ "started_local": "Mon 16 Nov 2026, 10:29 AM AEDT",
+ "started_et": "Sun 15 Nov 2026, 06:29 PM ET",
  "local_tz": "Australia/Melbourne",
  "first_session": "2026-11-12",
  "universe": [
@@ -133,23 +133,21 @@
     "entry": "close > 200-day MA and 50-day MA > 200-day MA, ranked by 12-month momentum",
     "rebalance": "monthly",
     "take_profit_pct": null,
-    "stop_loss_pct": null,
+    "stop_loss_pct": 10,
     "trailing_stop_pct": null,
-    "atr_trail_mult": 3.0,
-    "atr_period": 22
+    "atr_trail_mult": null
    },
    "short_term": {
     "allocation_pct": 40,
     "max_positions": 4,
     "rsi_period": 2,
     "rsi_threshold": 10,
-    "take_profit_pct": null,
+    "take_profit_pct": 10,
     "stop_loss_pct": null,
     "trailing_stop_pct": null,
-    "max_hold_days": 10,
-    "exit_above_sma": 5,
-    "atr_stop_mult": 2.5,
-    "atr_period": 14
+    "max_hold_days": 40,
+    "atr_stop_mult": null,
+    "exit_above_sma": null
    },
    "costs": {
     "preset": "au_flat_fee",
@@ -181,16 +179,16 @@
   "claude_exits": {
    "long_term": {
     "trailing_stop_pct": null,
-    "atr_trail_mult": 3.0,
-    "atr_period": 22
+    "atr_trail_mult": null,
+    "stop_loss_pct": 10,
+    "take_profit_pct": null
    },
    "short_term": {
-    "take_profit_pct": null,
-    "exit_above_sma": 5,
+    "take_profit_pct": 10,
     "stop_loss_pct": null,
-    "atr_stop_mult": 2.5,
-    "atr_period": 14,
-    "max_hold_days": 10
+    "atr_stop_mult": null,
+    "exit_above_sma": null,
+    "max_hold_days": 40
    }
   }
  }

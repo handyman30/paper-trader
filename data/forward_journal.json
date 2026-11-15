@@ -29,46 +29,183 @@
   ]
  },
  "start_cash": 100000.0,
- "journal": [],
- "baseline_date": "2026-11-10",
- "open_positions": [],
+ "journal": [
+  {
+   "date": "2026-11-12",
+   "day": 1,
+   "equity": 99742.56073799134,
+   "day_pnl": 442.56073799134174,
+   "day_pct": 0.4456805015018439,
+   "cum_pct": -0.25743926200866296,
+   "spy_day_pct": -0.3540361998459751,
+   "spy_cum_pct": -0.3540361998459751,
+   "goal_equity": 100032.69636948833,
+   "vs_goal": -290.13563149698894,
+   "fees": 18.0,
+   "fees_cum": 718.0,
+   "drawdown_pct": 0.0,
+   "buys": [
+    "AMD x17 @ $569.56 (long-term)",
+    "TXN x32 @ $307.40 (long-term)",
+    "XOM x58 @ $168.33 (long-term)",
+    "CVX x45 @ $215.11 (long-term)",
+    "UNP x32 @ $305.07 (long-term)",
+    "AAPL x27 @ $357.89 (long-term)"
+   ],
+   "sells": [],
+   "note": "Thu 12 Nov \u00b7 Day 1: $99,743 (+0.45% today, -0.26% since start, after fees). SPY -0.35% today, -0.35% since start. Bought AMD x17 @ $569.56 (long-term); TXN x32 @ $307.40 (long-term); XOM x58 @ $168.33 (long-term); CVX x45 @ $215.11 (long-term); UNP x32 @ $305.07 (long-term); AAPL x27 @ $357.89 (long-term). Behind the 1%/month pace by $290. Fees today $18.00 (total $718.00)."
+  },
+  {
+   "date": "2026-11-13",
+   "day": 2,
+   "equity": 98774.80956306458,
+   "day_pnl": -967.7511749267578,
+   "day_pct": -0.9702489767321021,
+   "cum_pct": -1.2251904369354194,
+   "spy_day_pct": -0.3632185145994393,
+   "spy_cum_pct": -0.7159687894191857,
+   "goal_equity": 100065.40342950243,
+   "vs_goal": -1290.5938664378482,
+   "fees": 0.0,
+   "fees_cum": 718.0,
+   "drawdown_pct": -0.9702489767321021,
+   "buys": [],
+   "sells": [],
+   "note": "Fri 13 Nov \u00b7 Day 2: $98,775 (-0.97% today, -1.23% since start, after fees). SPY -0.36% today, -0.72% since start. No trades, holding. Behind the 1%/month pace by $1,291. Fees today $0.00 (total $718.00)."
+  }
+ ],
+ "baseline_date": "2026-11-11",
+ "open_positions": [
+  {
+   "sleeve": "long_term",
+   "ticker": "AMD",
+   "qty": 17,
+   "entry_date": "2026-11-12",
+   "entry": 569.5646693115234,
+   "price": 534.0599975585938,
+   "unrealized": -603.5794197998041,
+   "unrealized_pct": -6.233650657412948,
+   "stop": 504.9,
+   "target": null
+  },
+  {
+   "sleeve": "long_term",
+   "ticker": "TXN",
+   "qty": 32,
+   "entry_date": "2026-11-12",
+   "entry": 307.403625,
+   "price": 303.6000061035156,
+   "unrealized": -121.71580468749926,
+   "unrealized_pct": -1.237337034162933,
+   "stop": 269.4245010375976,
+   "target": null
+  },
+  {
+   "sleeve": "long_term",
+   "ticker": "XOM",
+   "qty": 58,
+   "entry_date": "2026-11-12",
+   "entry": 168.334125,
+   "price": 170.58999633789062,
+   "unrealized": 130.84053759765624,
+   "unrealized_pct": 1.3401152843433461,
+   "stop": 145.2777442932129,
+   "target": null
+  },
+  {
+   "sleeve": "long_term",
+   "ticker": "CVX",
+   "qty": 45,
+   "entry_date": "2026-11-12",
+   "entry": 215.1075,
+   "price": 219.88999938964844,
+   "unrealized": 215.21247253418025,
+   "unrealized_pct": 2.2233066674330004,
+   "stop": 185.36800155639648,
+   "target": null
+  },
+  {
+   "sleeve": "long_term",
+   "ticker": "UNP",
+   "qty": 32,
+   "entry_date": "2026-11-12",
+   "entry": 305.0724734344482,
+   "price": 302.44000244140625,
+   "unrealized": -84.23907177734327,
+   "unrealized_pct": -0.8629002031570132,
+   "stop": 260.54199066162107,
+   "target": null
+  },
+  {
+   "sleeve": "long_term",
+   "ticker": "AAPL",
+   "qty": 27,
+   "entry_date": "2026-11-12",
+   "entry": 357.88884645080566,
+   "price": 356.2699890136719,
+   "unrealized": -43.70915080261216,
+   "unrealized_pct": -0.45233525805233876,
+   "stop": 305.46314697265626,
+   "target": null
+  }
+ ],
  "cash": {
-  "long_term": 59580.0,
+  "long_term": 1173.94986763001,
   "short_term": 39720.0
  },
- "queued": [
-  "BUY AMD (long-term)",
-  "BUY TXN (long-term)",
-  "BUY XOM (long-term)",
-  "BUY CVX (long-term)",
-  "BUY UNP (long-term)",
-  "BUY LLY (long-term)"
- ],
+ "queued": [],
  "closed_trades": [],
  "equity": [
   [
-   "2026-11-10",
+   "2026-11-11",
    99300.0
+  ],
+  [
+   "2026-11-12",
+   99742.56073799134
+  ],
+  [
+   "2026-11-13",
+   98774.80956306458
   ]
  ],
  "bench": [
   [
-   "2026-11-10",
+   "2026-11-11",
    100000.0
+  ],
+  [
+   "2026-11-12",
+   99645.96380015403
+  ],
+  [
+   "2026-11-13",
+   99284.03121058081
   ]
  ],
- "bench_close": 749.9199829101562,
+ "bench_close": 754.3699951171875,
  "fx_fee": 700.0,
  "cost_preset": "au_flat_fee",
- "updated_utc": "2026-11-12T01:43:48.319605+00:00",
+ "updated_utc": "2026-11-15T23:29:26.835235+00:00",
  "readiness": [
   {
    "day": 1,
    "title": "System check",
    "question": "Did it trade on real prices and charge fees?",
-   "status": "pending",
-   "checks": [],
-   "date": null
+   "status": "pass",
+   "checks": [
+    {
+     "label": "Simulated orders filled at real opening prices",
+     "status": "pass",
+     "detail": "session 2026-11-12 processed"
+    },
+    {
+     "label": "Fees charged on every order",
+     "status": "pass",
+     "detail": "$18.00 trading fees + $700 one-time FX"
+    }
+   ],
+   "date": "2026-11-12"
   },
   {
    "day": 5,

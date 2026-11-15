@@ -13,7 +13,7 @@ from trader import forward
 COLORS = {"yours": "#2a78d6", "spy": "#eb6834", "claude": "#1baf7a"}
 TARGET = "#898781"
 ICON = {"pass": "✅", "fail": "⚠️", "pending": "⏳"}
-BACKTEST_CAGR = {"yours": 17.6, "claude": 10.4}  # 2016-2026 backtest with costs, for reference only
+BACKTEST_CAGR = {"yours": 17.7, "claude": 27.7}  # 2016-2026 backtest with costs, for reference only
 
 
 @st.cache_data(ttl=900, show_spinner="Updating with the latest market data…")
@@ -103,14 +103,16 @@ def render():
     with st.expander("What's different between the two algos?"):
         st.markdown(
             "| | Your algo | Claude's algo |\n|---|---|---|\n"
-            "| Short-term sell | **+10%** target | when the bounce is done (close above 5-day average) |\n"
-            "| Short-term stop | **−5%** | 2.5 × ATR(14) below entry (scales with volatility) |\n"
-            "| Short-term time limit | 40 days | 10 days |\n"
-            "| Long-term stop | **15%** trailing from the high | 3 × ATR(22) trailing from the high |\n"
+            "| Short-term sell | **+10%** target | **+10%** target |\n"
+            "| Short-term stop | **−5%** | none (stops hurt dip-buying); 40-day time limit only |\n"
+            "| Short-term time limit | 40 days | 40 days |\n"
+            "| Long-term stop | **15%** trailing from the high | **10% below the buy price**, fixed (not trailing) |\n"
             "| Stocks, buy rules, sizing, fees | same | same |\n\n"
-            "Claude's rules were fixed **before** testing. In the 10-year backtest they did worse "
-            "(10.4% vs 17.6%/yr): selling bounces early cut winners short, and the ATR trailing stop got "
-            "shaken out of trends. They're being forward-tested anyway, unchanged, as an honest head-to-head.")
+            "**Claude's algo v2** (switched Mon 16 Nov, replayed from the same 12 Nov start): the long-term stop comes "
+            "from Han, Zhou & Zhu, *Taming Momentum Crashes: A Simple Stop-Loss Strategy*. Backtest 2016–2026 with "
+            "costs: 27.7%/yr vs 17.7% for yours (23.8% vs 14.3% without the look-ahead fundamentals filter). "
+            "v1 (ATR stops, bounce exit) made 10.4% and was retired; its record is in `data/archive/`. "
+            "v2 was picked from 9 backtested candidates, so expect the forward result to be lower than the backtest.")
 
     # ---------- per-algo detail ----------
     tabs = st.tabs([forward.TESTS[n] for n in names])
