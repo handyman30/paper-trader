@@ -40,3 +40,17 @@ def with_claude_exits(cfg: dict) -> dict:
     for sleeve, over in (cfg.get("claude_exits") or {}).items():
         c["swing"][sleeve].update(over)
     return c
+
+
+def asx_config(cfg: dict, rules: str | None = None) -> dict:
+    """The ASX model: config.yaml -> asx overrides the universe, benchmark and costs; exits are yours or Claude's."""
+    import copy
+    a = cfg["asx"]
+    rules = rules or a.get("rules", "yours")
+    c = with_claude_exits(cfg) if rules == "claude" else copy.deepcopy(cfg)
+    c["benchmark"] = a["benchmark"]
+    c["swing"]["universe"] = list(a["swing"]["universe"])
+    c["swing"]["costs"] = copy.deepcopy(a["swing"]["costs"])
+    c["market"] = "asx"
+    c["asx_rules"] = rules
+    return c

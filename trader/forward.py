@@ -17,7 +17,16 @@ from .config import ROOT
 from .fundamentals import select_quality
 from .swing import load_daily, simulate
 
-TESTS = {"yours": "Your algo", "claude": "Claude's algo"}
+TESTS = {"yours": "Your algo", "claude": "Claude's algo", "asx": "ASX algo"}
+NY, SYD = ZoneInfo("America/New_York"), ZoneInfo("Australia/Sydney")
+MARKETS = {  # open/close in exchange-local time; "done" = when the day's final (auction) prices are in
+    "us": dict(tz=NY, open=(9, 30), done=(16, 15), bench_name="SPY", ccy="US$", zone="ET", label="US"),
+    "asx": dict(tz=SYD, open=(10, 0), done=(16, 20), bench_name="ASX 200", ccy="A$", zone="Sydney", label="ASX"),
+}
+
+
+def market(cfg_or_out: dict) -> dict:
+    return MARKETS[cfg_or_out.get("market", "us")]
 
 
 def _p(kind: str, name: str):
@@ -26,7 +35,6 @@ def _p(kind: str, name: str):
 
 def exists(name="yours") -> bool:
     return _p("state", name).exists()
-NY = ZoneInfo("America/New_York")
 CHECKPOINTS = [1, 5, 10, 20, 60]
 
 
@@ -37,9 +45,9 @@ def local_tz() -> ZoneInfo:
         return ZoneInfo("UTC")
 
 
-def _next_session(now_et: pd.Timestamp) -> pd.Timestamp:
+def _next_session(now_et: pd.Timestamp, open_hm=(9, 30)) -> pd.Timestamp:
     d = now_et.normalize().tz_localize(None)
-    if now_et.hour * 60 + now_et.minute >= 9 * 60 + 30 or d.weekday() >= 5:  # today's open already passed
+    if now_et.hour * 60 + now_et.minute >= open_hm[0] * 60 + open_hm[1] or d.weekday() >= 5:  # today's open already passed
         d += pd.Timedelta(days=1)
     while d.weekday() >= 5:
         d += pd.Timedelta(days=1)
@@ -53,7 +61,11 @@ def start(cfg: dict, restart=False, name="yours") -> dict:
         print(f"[{TESTS[name]}] already running since {st['started_local']}. Use --restart to start over.")
         return st
     now_local = datetime.now(local_tz())
-    now_et = pd.Timestamp.now(tz=NY)
+    if name == "asx":
+        from .config import asx_config
+        cfg = asx_config(cfg)
+    m = market(cfg)
+    now_et = pd.Timestamp.now(tz=m["tz"])
     if name == "claude":  # identical stocks, start date and entries as yours; only the exits differ
         from .config import with_claude_exits
         base = json.loads(_p("state", "yours").read_text())
@@ -62,11 +74,11 @@ def start(cfg: dict, restart=False, name="yours") -> dict:
     else:
         s = cfg["swing"]
         universe = select_quality(s["universe"], s["top_n_quality"]) if s["fundamental_filter"] else list(s["universe"])
-        first = str(_next_session(now_et).date())
+        first = str(_next_session(now_et, m["open"]).date())
     st = dict(name=name, title=TESTS[name],
         started_utc=now_local.astimezone(ZoneInfo("UTC")).isoformat(),
         started_local=now_local.strftime("%a %d %b %Y, %I:%M %p %Z"),
-        started_et=now_et.strftime("%a %d %b %Y, %I:%M %p ET"),
+        started_et=now_et.strftime("%a %d %b %Y, %I:%M %p ") + m["zone"],
         local_tz=str(local_tz()),
         first_session=first,
         universe=universe,
@@ -78,26 +90,24 @@ def start(cfg: dict, restart=False, name="yours") -> dict:
     STATE.write_text(json.dumps(st, indent=1, default=str))
     JOURNAL.unlink(missing_ok=True)
     print(f"[{TESTS[name]}] started {st['started_local']} ({st['started_et']}).")
-    print(f"First simulated trades at the US open on {st['first_session']}. Universe: {', '.join(universe)}")
+    print(f"First simulated trades at the {m['label']} open on {st['first_session']}. Universe: {', '.join(universe)}")
     return st
 
 
-def _complete_bars(px: dict) -> dict:
-    """Drop today's bar if the US session hasn't closed yet (avoid using a partial day)."""
-    now = pd.Timestamp.now(tz=NY)
-    if now.hour * 60 + now.minute < 16 * 60 + 15:
+def _complete_bars(px: dict, m=MARKETS["us"]) -> dict:
+    """Drop today's bar if the session hasn't closed yet (avoid using a partial day)."""
+    now = pd.Timestamp.now(tz=m["tz"])
+    if now.hour * 60 + now.minute < m["done"][0] * 60 + m["done"][1]:
         today = now.normalize().tz_localize(None)
         px = {k: v[v.index < today] for k, v in px.items()}
     return px
 
 
-PRICES = ROOT / "data" / "forward_prices.pkl"
-
-
-def _stable_prices(px: dict) -> dict:
+def _stable_prices(px: dict, mkt="us") -> dict:
     """Merge fresh bars into a local snapshot: once a completed day has prices, a later data-feed
     glitch (missing/NaN row) can't erase or change it. New days and filled gaps are added."""
     import pickle
+    PRICES = ROOT / "data" / ("forward_prices.pkl" if mkt == "us" else f"forward_prices_{mkt}.pkl")
     if PRICES.exists():
         snap = pickle.loads(PRICES.read_bytes())
         px = {k: snap[k].combine_first(v) if k in snap else v for k, v in px.items()}
@@ -117,7 +127,9 @@ def update(name="yours", verbose=True) -> dict | None:
     s = cfg["swing"]
     bench = cfg.get("benchmark", "SPY")
     warmup = (pd.Timestamp(st["first_session"]) - pd.Timedelta(days=420)).strftime("%Y-%m-%d")
-    px = _stable_prices(_complete_bars(load_daily(sorted(set(st["universe"]) | {bench}), warmup)))
+    m = market(cfg)
+    px = _stable_prices(_complete_bars(load_daily(sorted(set(st["universe"]) | {bench}), warmup), m),
+                        cfg.get("market", "us"))
     r = simulate(cfg, st["universe"], px, st["first_session"], close_at_end=False)
     eq, b, fees = r["equity"], r["bench"], r["fees_by_day"]
     start_cash = float(s["starting_cash"])
@@ -144,10 +156,11 @@ def update(name="yours", verbose=True) -> dict | None:
                    for x in f.itertuples() if x.side == "SELL"],
         ))
     for j in days:
-        j["note"] = _auto_note(j, start_cash)
+        j["note"] = _auto_note(j, start_cash, m["bench_name"])
 
     out = dict(state={k: v for k, v in st.items() if k != "config"}, start_cash=start_cash, journal=days,
-               baseline_date=str(eq.index[0].date()),
+               baseline_date=str(eq.index[0].date()), market=cfg.get("market", "us"),
+               bench_ticker=bench, bench_name=m["bench_name"], ccy=m["ccy"],
                open_positions=r["open_positions"], cash=r["cash"],
                queued=[f"BUY {t} ({sl.replace('_', '-')})" for sl, t in r["queued_buys"]] +
                       [f"SELL {t} ({why.replace('_', ' ')})" for _, t, why in r["queued_sells"]],
@@ -163,10 +176,10 @@ def update(name="yours", verbose=True) -> dict | None:
     return out
 
 
-def _auto_note(j, start_cash) -> str:
+def _auto_note(j, start_cash, bench_name="SPY") -> str:
     d = pd.Timestamp(j["date"])
     head = (f"{d:%a %d %b} · Day {j['day']}: ${j['equity']:,.0f} ({j['day_pct']:+.2f}% today, "
-            f"{j['cum_pct']:+.2f}% since start, after fees). SPY {j['spy_day_pct']:+.2f}% today, "
+            f"{j['cum_pct']:+.2f}% since start, after fees). {bench_name} {j['spy_day_pct']:+.2f}% today, "
             f"{j['spy_cum_pct']:+.2f}% since start.")
     acts = []
     if j["buys"]:
@@ -194,6 +207,7 @@ def readiness(out: dict, cfg: dict) -> list[dict]:
     """Checkpoints on the way to real money, each judged on the data AS OF that trading day."""
     j = out["journal"]
     cap = out["start_cash"]
+    B = out.get("bench_name", "SPY")
 
     def c(label, ok, detail):
         return dict(label=label, status="pass" if ok else "fail", detail=detail)
@@ -209,18 +223,18 @@ def readiness(out: dict, cfg: dict) -> list[dict]:
             c("Trading fees under 0.5% of capital", m["trade_fees"] < cap * 0.005, f"${m['trade_fees']:,.0f}"),
         ]),
         10: ("Early performance", "Not falling badly behind the market?", lambda m: [
-            c("Within 3 pts of SPY", m["cum"] >= m["spy"] - 3, f"{m['cum']:+.2f}% vs SPY {m['spy']:+.2f}%"),
+            c(f"Within 3 pts of {B}", m["cum"] >= m["spy"] - 3, f"{m['cum']:+.2f}% vs {B} {m['spy']:+.2f}%"),
             c("Drawdown under 10%", m["maxdd"] > -10, f"worst {m['maxdd']:.1f}%"),
         ]),
-        20: ("First month", "On pace for 1%/month, or ahead of SPY?", lambda m: [
-            c("At goal pace OR ahead of SPY", m["cum"] >= m["goal"] or m["cum"] >= m["spy"],
-              f"{m['cum']:+.2f}% vs goal {m['goal']:+.2f}% / SPY {m['spy']:+.2f}%"),
+        20: ("First month", f"On pace for 1%/month, or ahead of {B}?", lambda m: [
+            c(f"At goal pace OR ahead of {B}", m["cum"] >= m["goal"] or m["cum"] >= m["spy"],
+              f"{m['cum']:+.2f}% vs goal {m['goal']:+.2f}% / {B} {m['spy']:+.2f}%"),
             c("Drawdown under 12%", m["maxdd"] > -12, f"worst {m['maxdd']:.1f}%"),
             c("At least 5 closed trades", m["trades"] >= 5, f"{m['trades']} closed"),
         ]),
         60: ("Real-money gate", "About 3 months in: enough evidence to try a SMALL real amount?", lambda m: [
-            c("At goal pace OR ahead of SPY", m["cum"] >= m["goal"] or m["cum"] >= m["spy"],
-              f"{m['cum']:+.2f}% vs goal {m['goal']:+.2f}% / SPY {m['spy']:+.2f}%"),
+            c(f"At goal pace OR ahead of {B}", m["cum"] >= m["goal"] or m["cum"] >= m["spy"],
+              f"{m['cum']:+.2f}% vs goal {m['goal']:+.2f}% / {B} {m['spy']:+.2f}%"),
             c("Drawdown no worse than 15%", m["maxdd"] > -15, f"worst {m['maxdd']:.1f}%"),
             c("At least 20 closed trades", m["trades"] >= 20, f"{m['trades']} closed"),
             c("Win rate within 10 pts of backtest (46%)", m["win"] is not None and abs(m["win"] - 46) <= 10,
@@ -245,7 +259,7 @@ def print_summary(out):
     print(f"\n{st.get('title', 'Forward test')} · started {st['started_local']} ({st['started_et']})")
     print(f"Baseline: {out['baseline_date']} close, ${out['start_cash']:,.0f} · costs: {out['cost_preset']}")
     if not out["journal"]:
-        print(f"Waiting for the first US session ({st['first_session']}) to close.")
+        print(f"Waiting for the first {market(out)['label']} session ({st['first_session']}) to close.")
     for j in out["journal"]:
         print(" ", j["note"])
     if out["queued"]:
@@ -256,13 +270,16 @@ def print_summary(out):
 
 
 def live_marks(out: dict) -> dict | None:
-    """Latest (~15 min delayed) prices for open positions + SPY during the US session."""
-    now = pd.Timestamp.now(tz=NY)
+    """Latest (~15-20 min delayed) prices for open positions + the benchmark during the session."""
+    m = market(out)
+    now = pd.Timestamp.now(tz=m["tz"])
     mins = now.hour * 60 + now.minute
-    if now.weekday() >= 5 or not (9 * 60 + 30 <= mins <= 16 * 60 + 15) or not out["open_positions"]:
+    if now.weekday() >= 5 or not (m["open"][0] * 60 + m["open"][1] <= mins <= m["done"][0] * 60 + m["done"][1]) \
+            or not out["open_positions"]:
         return None
     import yfinance as yf
-    tick = sorted({p["ticker"] for p in out["open_positions"]} | {"SPY"})
+    bt = out.get("bench_ticker", "SPY")
+    tick = sorted({p["ticker"] for p in out["open_positions"]} | {bt})
     try:
         raw = yf.download(tick, period="1d", interval="5m", progress=False, auto_adjust=True)["Close"]
     except Exception:
@@ -270,13 +287,13 @@ def live_marks(out: dict) -> dict | None:
     if raw.empty:
         return None
     last = raw.ffill().iloc[-1]
-    ts = raw.index[-1].tz_convert(NY)
+    ts = raw.index[-1].tz_convert(m["tz"])
     pos_val = sum(p["qty"] * float(last.get(p["ticker"], p["price"])) for p in out["open_positions"])
     equity = sum(out["cash"].values()) + pos_val
     prev_close = out["equity"][-1][1]
-    return dict(as_of=ts.strftime("%I:%M %p ET"), equity=equity, today_pct=(equity / prev_close - 1) * 100,
+    return dict(as_of=ts.strftime("%I:%M %p ") + m["zone"], equity=equity, today_pct=(equity / prev_close - 1) * 100,
                 prices={k: float(v) for k, v in last.items()},
-                spy_today_pct=(float(last["SPY"]) / out["bench_close"] - 1) * 100 if out.get("bench_close") else None)
+                spy_today_pct=(float(last[bt]) / out["bench_close"] - 1) * 100 if out.get("bench_close") else None)
 
 
 def load_journal(name="yours") -> dict | None:

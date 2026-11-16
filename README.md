@@ -43,3 +43,8 @@ Edit `config.yaml` to change tickers, the rule (`dip` / `rsi`), thresholds, TP/S
 ## Hosting (Streamlit Community Cloud, free)
 Push this folder to a private GitHub repo, then go to share.streamlit.io → Create app → pick the repo → main file `dashboard.py`.
 Notes you add on the hosted app are lost when the app restarts; the trading results are not, because they rebuild from the start date.
+
+## ASX model
+`python main.py forward start --name asx` runs the same engine on 50 ASX large caps (config.yaml → `asx`):
+A$100k, $9.50 per order, no FX, benchmark STW (ASX 200). Exit rules default to yours (`asx.rules`), which beat
+Claude's on the ASX backtest (17.5% vs 16.7%/yr, −16% vs −32% worst drawdown, with the quality filter).

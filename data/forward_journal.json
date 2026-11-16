@@ -75,6 +75,10 @@
   }
  ],
  "baseline_date": "2026-11-11",
+ "market": "us",
+ "bench_ticker": "SPY",
+ "bench_name": "SPY",
+ "ccy": "US$",
  "open_positions": [
   {
    "sleeve": "long_term",
@@ -186,7 +190,7 @@
  "bench_close": 754.3699951171875,
  "fx_fee": 700.0,
  "cost_preset": "au_flat_fee",
- "updated_utc": "2026-11-15T23:29:26.835235+00:00",
+ "updated_utc": "2026-11-16T01:22:06.096819+00:00",
  "readiness": [
   {
    "day": 1,

@@ -10,7 +10,7 @@ import streamlit as st
 from trader import forward
 
 # reference palette slots 1-3 (validated all-pairs for 3 series) + muted dashed reference
-COLORS = {"yours": "#2a78d6", "spy": "#eb6834", "claude": "#1baf7a"}
+COLORS = {"yours": "#2a78d6", "spy": "#eb6834", "claude": "#1baf7a", "asx": "#2a78d6"}
 TARGET = "#898781"
 ICON = {"pass": "✅", "fail": "⚠️", "pending": "⏳"}
 BACKTEST_CAGR = {"yours": 17.7, "claude": 27.7}  # 2016-2026 backtest with costs, for reference only
@@ -34,24 +34,35 @@ def render():
     names = [n for n in forward.TESTS if forward.exists(n)]
     outs = {n: _update(now.floor("15min").isoformat(), n) or forward.load_journal(n) for n in names}
     marks = {n: _marks(now.floor("5min").isoformat(), json.dumps(o, default=str)) for n, o in outs.items()}
-    y = outs["yours"]
-    tz = ZoneInfo(y["state"].get("local_tz", "UTC"))
-    cap = y["start_cash"]
-
-    st.title("Forward test: your algo vs Claude's algo")
-    st.markdown(f"Simulated **${cap:,.0f}** each, real US prices, fees included (`{y['cost_preset']}`). "
-                "Same stocks and same buy rules; **only the stop-loss and sell rules differ**.")
-    upd = datetime.fromisoformat(y["updated_utc"]).astimezone(tz)
+    tz = ZoneInfo(outs["yours"]["state"].get("local_tz", "UTC"))
+    st.title("Forward tests")
     c1, c2 = st.columns([4, 1])
+    upd = datetime.fromisoformat(outs["yours"]["updated_utc"]).astimezone(tz)
     c1.caption(f"Data refreshed {upd:%a %d %b, %I:%M %p %Z}. Re-checks every 15 min while the page is open. "
-               "Trades are decided on each US close and filled at the next open.")
+               "Trades are decided on each close and filled at the next open.")
     if c2.button("Refresh now"):
         _update.clear()
         _marks.clear()
         st.rerun()
+    us_tab, asx_tab = st.tabs(["🇺🇸 US: your algo vs Claude's", "🇦🇺 ASX algo"])
+    with us_tab:
+        render_us({n: outs[n] for n in names if n != "asx"}, {n: marks[n] for n in names if n != "asx"}, tz)
+    with asx_tab:
+        if "asx" in outs:
+            render_asx(outs["asx"], marks["asx"], tz)
+        else:
+            st.info("No ASX test yet. Run `python main.py forward start --name asx`.")
+
+
+def render_us(outs, marks, tz):
+    names = list(outs)
+    y = outs["yours"]
+    cap = y["start_cash"]
+    st.subheader("Your algo vs Claude's algo (US stocks)")
+    st.markdown(f"Simulated **${cap:,.0f}** each, real US prices, fees included (`{y['cost_preset']}`). "
+                "Same stocks and same buy rules; **only the stop-loss and sell rules differ**.")
 
     # ---------- scoreboard ----------
-    st.subheader("Scoreboard")
     cols = st.columns(len(names))
     for col, n in zip(cols, names):
         o, m = outs[n], marks[n]
@@ -121,17 +132,58 @@ def render():
             render_test(n, outs[n], marks[n], tz)
 
 
+def render_asx(o, m, tz):
+    cap, j = o["start_cash"], o["journal"]
+    last = j[-1] if j else None
+    rules = "your rules (+10% / −5% short-term, 15% trailing long-term)"
+    st.subheader("ASX algo (Australian stocks, A$)")
+    st.markdown(f"Simulated **A${cap:,.0f}**, real ASX prices, ASX brokerage included (`{o['cost_preset']}`, no FX). "
+                f"Same engine and buy rules as the US test, using {rules}. Benchmark: ASX 200 (STW ETF).")
+    if m:
+        eq, sub = m["equity"], f"{m['today_pct']:+.2f}% today · live {m['as_of']}"
+    elif last:
+        eq, sub = last["equity"], f"{last['day_pct']:+.2f}% on {pd.Timestamp(last['date']):%a %d %b}"
+    else:
+        eq, sub = cap, "waiting for first session"
+    a, b, c = st.columns(3)
+    a.metric("Equity", f"A${eq:,.0f}", sub, delta_color="off")
+    b.metric("Since start", f"{(eq / cap - 1) * 100:+.2f}%",
+             f"ASX 200 {last['spy_cum_pct']:+.2f}%" if last else "ASX 200 —", delta_color="off")
+    c.metric("Checkpoints", f"{sum(r['status'] == 'pass' for r in o['readiness'])}/{len(o['readiness'])}",
+             f"{len(o['closed_trades'])} closed trades", delta_color="off")
+    if not j:
+        first = pd.Timestamp(o["state"]["first_session"])
+        st.info(f"⏳ No trades yet. First buys at the ASX open (10:00 AM Sydney) on **{first:%a %d %b}**; "
+                f"first result after the 4:10 PM close that day. Backtest 2016–2026 with costs: 17.5%/yr vs 9.2% "
+                "for the ASX 200 (9.7%/yr without the look-ahead quality filter). The forward test is the one that counts.")
+    if len(o["equity"]) > 1:
+        fig = go.Figure()
+        x = pd.to_datetime([d for d, _ in o["equity"]])
+        fig.add_scatter(x=x, y=cap * 1.01 ** ((x - x[0]).days / 30.4375), name="Goal 1%/mo",
+                        line=dict(color=TARGET, dash="dash", width=2), hovertemplate="A$%{y:,.0f}")
+        fig.add_scatter(x=pd.to_datetime([d for d, _ in o["bench"]]), y=[v for _, v in o["bench"]],
+                        name="ASX 200 buy & hold", line=dict(color=COLORS["spy"], width=2), hovertemplate="A$%{y:,.0f}")
+        fig.add_scatter(x=x, y=[v for _, v in o["equity"]], name="ASX algo", line=dict(color=COLORS["asx"], width=2),
+                        mode="lines+markers" if len(x) < 40 else "lines",
+                        marker=dict(size=8, line=dict(width=2, color="white")), hovertemplate="A$%{y:,.0f}")
+        fig.update_layout(height=340, margin=dict(l=10, r=10, t=30, b=10), hovermode="x unified",
+                          legend=dict(orientation="h", y=1.1, x=0), yaxis=dict(tickprefix="A$", tickformat=",.0f"),
+                          xaxis=dict(rangebreaks=[dict(bounds=["sat", "mon"])]))
+        st.plotly_chart(fig, width="stretch")
+    render_test("asx", o, m, tz)
+
+
 def render_test(name, out, marks, tz):
     stt, j, cap = out["state"], out["journal"], out["start_cash"]
     last = j[-1] if j else None
-    st.markdown(f"**Started {stt['started_local']}** ({stt['started_et']}) · baseline = US close "
+    st.markdown(f"**Started {stt['started_local']}** ({stt['started_et']}) · baseline = close of "
                 f"{out['baseline_date']}")
     if last:
         c = st.columns(4)
         c[0].metric("vs 1%/month goal", f"{'+' if last['vs_goal'] >= 0 else '-'}${abs(last['vs_goal']):,.0f}",
                     "ahead" if last["vs_goal"] >= 0 else "behind",
                     delta_color="normal" if last["vs_goal"] >= 0 else "inverse")
-        c[1].metric("Fees paid", f"${last['fees_cum']:,.2f}", f"incl. ${out.get('fx_fee', 0):,.0f} one-time FX",
+        c[1].metric("Fees paid", f"${last['fees_cum']:,.2f}", f"incl. ${out['fx_fee']:,.0f} one-time FX" if out.get("fx_fee") else "brokerage only",
                     delta_color="off")
         c[2].metric("Trading days", f"{len(j)}")
         c[3].metric("Worst drawdown", f"{min(x['drawdown_pct'] for x in j):.1f}%")

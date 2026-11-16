@@ -1,0 +1,112 @@
+{
+ "state": {
+  "name": "asx",
+  "title": "ASX algo",
+  "started_utc": "2026-11-16T01:21:31.684554+00:00",
+  "started_local": "Mon 16 Nov 2026, 12:21 PM AEDT",
+  "started_et": "Mon 16 Nov 2026, 12:21 PM Sydney",
+  "local_tz": "Australia/Melbourne",
+  "first_session": "2026-11-17",
+  "universe": [
+   "EVN.AX",
+   "PME.AX",
+   "NST.AX",
+   "GMG.AX",
+   "PLS.AX",
+   "RIO.AX",
+   "RMD.AX",
+   "REA.AX",
+   "TNE.AX",
+   "BHP.AX",
+   "MIN.AX",
+   "SGP.AX",
+   "WDS.AX",
+   "FMG.AX",
+   "QBE.AX",
+   "MPL.AX",
+   "CPU.AX",
+   "SCG.AX",
+   "BXB.AX",
+   "ALL.AX"
+  ]
+ },
+ "start_cash": 100000.0,
+ "journal": [],
+ "baseline_date": "2026-11-13",
+ "market": "asx",
+ "bench_ticker": "STW.AX",
+ "bench_name": "ASX 200",
+ "ccy": "A$",
+ "open_positions": [],
+ "cash": {
+  "long_term": 60000.0,
+  "short_term": 40000.0
+ },
+ "queued": [
+  "BUY BHP.AX (long-term)",
+  "BUY QBE.AX (long-term)",
+  "BUY WDS.AX (long-term)",
+  "BUY CPU.AX (long-term)",
+  "BUY ALL.AX (long-term)",
+  "BUY MPL.AX (long-term)"
+ ],
+ "closed_trades": [],
+ "equity": [
+  [
+   "2026-11-13",
+   100000.0
+  ]
+ ],
+ "bench": [
+  [
+   "2026-11-13",
+   100000.0
+  ]
+ ],
+ "bench_close": 81.37999725341797,
+ "fx_fee": 0.0,
+ "cost_preset": "asx_flat_fee",
+ "updated_utc": "2026-11-16T01:22:06.139122+00:00",
+ "readiness": [
+  {
+   "day": 1,
+   "title": "System check",
+   "question": "Did it trade on real prices and charge fees?",
+   "status": "pending",
+   "checks": [],
+   "date": null
+  },
+  {
+   "day": 5,
+   "title": "Behaviour check",
+   "question": "Following the rules without blowing up?",
+   "status": "pending",
+   "checks": [],
+   "date": null
+  },
+  {
+   "day": 10,
+   "title": "Early performance",
+   "question": "Not falling badly behind the market?",
+   "status": "pending",
+   "checks": [],
+   "date": null
+  },
+  {
+   "day": 20,
+   "title": "First month",
+   "question": "On pace for 1%/month, or ahead of ASX 200?",
+   "status": "pending",
+   "checks": [],
+   "date": null
+  },
+  {
+   "day": 60,
+   "title": "Real-money gate",
+   "question": "About 3 months in: enough evidence to try a SMALL real amount?",
+   "status": "pending",
+   "checks": [],
+   "date": null
+  }
+ ]
+}

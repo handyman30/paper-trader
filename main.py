@@ -12,7 +12,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", choices=["backtest", "live", "sweep", "report", "swing", "swing-compare", "swing-live", "forward"])
     ap.add_argument("action", nargs="?", default="update", help="forward: start | update")
-    ap.add_argument("--name", default="yours", choices=["yours", "claude"], help="which forward test")
+    ap.add_argument("--name", default="yours", choices=["yours", "claude", "asx"], help="which forward test")
     ap.add_argument("--restart", action="store_true", help="forward start: discard the current forward test")
     ap.add_argument("--set", nargs="*", default=[], help="override config, e.g. --set entry_rule=rsi dip_pct=1.5")
     args = ap.parse_args()

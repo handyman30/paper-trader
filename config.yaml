@@ -113,3 +113,19 @@ claude_exits:                 # Claude's algo v2 (switched 16 Nov 2026, same sta
     atr_stop_mult: null
     exit_above_sma: null
     max_hold_days: 40         # the time limit is the only downside exit
+
+# ---- ASX model: same engine, Australian large caps, prices in AUD, no FX ----
+asx:
+  benchmark: STW.AX             # SPDR S&P/ASX 200 ETF (dividends included via adjusted prices)
+  rules: yours                  # which exit rules: yours | claude (picked by backtest, see README)
+  swing:
+    universe: [CBA.AX, BHP.AX, CSL.AX, NAB.AX, WBC.AX, ANZ.AX, MQG.AX, WES.AX, GMG.AX, FMG.AX,
+               TLS.AX, RIO.AX, WDS.AX, TCL.AX, WOW.AX, ALL.AX, QBE.AX, REA.AX, XRO.AX, COL.AX,
+               SUN.AX, BXB.AX, PME.AX, CPU.AX, RMD.AX, STO.AX, NST.AX, EVN.AX, ORG.AX, SHL.AX,
+               COH.AX, CAR.AX, SCG.AX, IAG.AX, ASX.AX, WTC.AX, TNE.AX, MIN.AX, PLS.AX, S32.AX,
+               LYC.AX, QAN.AX, JBH.AX, SGP.AX, MPL.AX, APA.AX, AGL.AX, NXT.AX, SOL.AX, TLX.AX]
+    costs:
+      preset: asx_flat_fee
+      presets:
+        asx_flat_fee:           # typical low-cost Australian broker on ASX trades; no FX, no US reg fees
+          commission_per_order: 9.50
