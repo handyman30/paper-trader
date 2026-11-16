@@ -6,7 +6,7 @@
   "started_local": "Mon 16 Nov 2026, 12:21 PM AEDT",
   "started_et": "Mon 16 Nov 2026, 12:21 PM Sydney",
   "local_tz": "Australia/Melbourne",
-  "first_session": "2026-11-17",
+  "first_session": "2026-11-16",
   "universe": [
    "EVN.AX",
    "PME.AX",
@@ -28,53 +28,193 @@
    "SCG.AX",
    "BXB.AX",
    "ALL.AX"
-  ]
+  ],
+  "open_overrides": {
+   "date": "2026-11-16",
+   "fill_time_utc": "2026-11-16T03:20:00+00:00",
+   "fill_time_local": "02:20 PM Sydney",
+   "prices": {
+    "BHP.AX": 57.599998474121094,
+    "QBE.AX": 26.885000228881836,
+    "WDS.AX": 31.020000457763672,
+    "CPU.AX": 45.125,
+    "ALL.AX": 67.22000122070312,
+    "MPL.AX": 5.460000038146973
+   }
+  }
  },
  "start_cash": 100000.0,
- "journal": [],
+ "journal": [
+  {
+   "date": "2026-11-16",
+   "day": 1,
+   "equity": 99909.72813782503,
+   "day_pnl": -90.27186217496637,
+   "day_pct": -0.09027186217496208,
+   "cum_pct": -0.09027186217496208,
+   "spy_day_pct": -0.2334662305530366,
+   "spy_cum_pct": -0.2334662305530366,
+   "goal_equity": 100098.12118353772,
+   "vs_goal": -188.3930457126844,
+   "fees": 57.0,
+   "fees_cum": 57.0,
+   "drawdown_pct": -0.09027186217496208,
+   "buys": [
+    "BHP.AX x173 @ $57.63 (long-term)",
+    "QBE.AX x373 @ $26.90 (long-term)",
+    "WDS.AX x322 @ $31.04 (long-term)",
+    "CPU.AX x221 @ $45.15 (long-term)",
+    "ALL.AX x148 @ $67.25 (long-term)",
+    "MPL.AX x1826 @ $5.46 (long-term)"
+   ],
+   "sells": [],
+   "note": "Mon 16 Nov \u00b7 Day 1: $99,910 (-0.09% today, -0.09% since start, after fees). ASX 200 -0.23% today, -0.23% since start. Bought BHP.AX x173 @ $57.63 (long-term); QBE.AX x373 @ $26.90 (long-term); WDS.AX x322 @ $31.04 (long-term); CPU.AX x221 @ $45.15 (long-term); ALL.AX x148 @ $67.25 (long-term); MPL.AX x1826 @ $5.46 (long-term). Behind the 1%/month pace by $188. Fees today $57.00 (total $57.00)."
+  }
+ ],
  "baseline_date": "2026-11-13",
  "market": "asx",
  "bench_ticker": "STW.AX",
  "bench_name": "ASX 200",
  "ccy": "A$",
- "open_positions": [],
+ "open_positions": [
+  {
+   "sleeve": "long_term",
+   "ticker": "BHP.AX",
+   "qty": 173,
+   "entry_date": "2026-11-16",
+   "entry": 57.62879847335815,
+   "price": 57.584999084472656,
+   "unrealized": -7.577294277190838,
+   "unrealized_pct": -0.07600260641517087,
+   "stop": 48.98447870235443,
+   "target": null
+  },
+  {
+   "sleeve": "long_term",
+   "ticker": "QBE.AX",
+   "qty": 373,
+   "entry_date": "2026-11-16",
+   "entry": 26.898442728996276,
+   "price": 26.885000228881836,
+   "unrealized": -5.014052542686134,
+   "unrealized_pct": -0.04997501249375258,
+   "stop": 22.863676319646835,
+   "target": null
+  },
+  {
+   "sleeve": "long_term",
+   "ticker": "WDS.AX",
+   "qty": 322,
+   "entry_date": "2026-11-16",
+   "entry": 31.03551045799255,
+   "price": 31.020000457763672,
+   "unrealized": -4.994220073699054,
+   "unrealized_pct": -0.04997501249374148,
+   "stop": 26.38018388929367,
+   "target": null
+  },
+  {
+   "sleeve": "long_term",
+   "ticker": "CPU.AX",
+   "qty": 221,
+   "entry_date": "2026-11-16",
+   "entry": 45.1475625,
+   "price": 45.125,
+   "unrealized": -4.986312499999862,
+   "unrealized_pct": -0.04997501249375258,
+   "stop": 38.375428125,
+   "target": null
+  },
+  {
+   "sleeve": "long_term",
+   "ticker": "ALL.AX",
+   "qty": 148,
+   "entry_date": "2026-11-16",
+   "entry": 67.25361122131348,
+   "price": 67.21499633789062,
+   "unrealized": -5.715002746582115,
+   "unrealized_pct": -0.05741681780593311,
+   "stop": 57.16556953811645,
+   "target": null
+  },
+  {
+   "sleeve": "long_term",
+   "ticker": "MPL.AX",
+   "qty": 1826,
+   "entry_date": "2026-11-16",
+   "entry": 5.462730038166046,
+   "price": 5.460000038146973,
+   "unrealized": -4.984980034827862,
+   "unrealized_pct": -0.04997501249375258,
+   "stop": 4.643320532441139,
+   "target": null
+  }
+ ],
  "cash": {
-  "long_term": 60000.0,
+  "long_term": 40.57353577424328,
   "short_term": 40000.0
  },
  "queued": [
-  "BUY BHP.AX (long-term)",
-  "BUY QBE.AX (long-term)",
-  "BUY WDS.AX (long-term)",
-  "BUY CPU.AX (long-term)",
-  "BUY ALL.AX (long-term)",
-  "BUY MPL.AX (long-term)"
+  "BUY NST.AX (short-term)"
  ],
  "closed_trades": [],
  "equity": [
   [
    "2026-11-13",
    100000.0
+  ],
+  [
+   "2026-11-16",
+   99909.72813782503
   ]
  ],
  "bench": [
   [
    "2026-11-13",
    100000.0
+  ],
+  [
+   "2026-11-16",
+   99766.53376944696
   ]
  ],
- "bench_close": 81.37999725341797,
+ "bench_close": 81.19000244140625,
  "fx_fee": 0.0,
  "cost_preset": "asx_flat_fee",
- "updated_utc": "2026-11-16T01:22:06.139122+00:00",
+ "updated_utc": "2026-11-16T03:41:01.604405+00:00",
+ "provisional": true,
+ "open_overrides": {
+  "date": "2026-11-16",
+  "fill_time_utc": "2026-11-16T03:20:00+00:00",
+  "fill_time_local": "02:20 PM Sydney",
+  "prices": {
+   "BHP.AX": 57.599998474121094,
+   "QBE.AX": 26.885000228881836,
+   "WDS.AX": 31.020000457763672,
+   "CPU.AX": 45.125,
+   "ALL.AX": 67.22000122070312,
+   "MPL.AX": 5.460000038146973
+  }
+ },
  "readiness": [
   {
    "day": 1,
    "title": "System check",
    "question": "Did it trade on real prices and charge fees?",
-   "status": "pending",
-   "checks": [],
-   "date": null
+   "status": "pass",
+   "checks": [
+    {
+     "label": "Simulated orders filled at real opening prices",
+     "status": "pass",
+     "detail": "session 2026-11-16 processed"
+    },
+    {
+     "label": "Fees charged on every order",
+     "status": "pass",
+     "detail": "$57.00 trading fees + $0 one-time FX"
+    }
+   ],
+   "date": "2026-11-16"
   },
   {
    "day": 5,

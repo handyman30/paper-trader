@@ -151,6 +151,13 @@ def render_asx(o, m, tz):
              f"ASX 200 {last['spy_cum_pct']:+.2f}%" if last else "ASX 200 —", delta_color="off")
     c.metric("Checkpoints", f"{sum(r['status'] == 'pass' for r in o['readiness'])}/{len(o['readiness'])}",
              f"{len(o['closed_trades'])} closed trades", delta_color="off")
+    ov = o.get("open_overrides")
+    if ov:
+        st.caption(f"Started mid-session: the first buys filled at the {ov['fill_time_local']} price "
+                   "(Yahoo's feed is about 20 min delayed), not at the open.")
+    if o.get("provisional"):
+        st.warning("Today's figures are **provisional** (live prices while the ASX is still trading). "
+                   "They become final after the 4:10 PM close.")
     if not j:
         first = pd.Timestamp(o["state"]["first_session"])
         st.info(f"⏳ No trades yet. First buys at the ASX open (10:00 AM Sydney) on **{first:%a %d %b}**; "

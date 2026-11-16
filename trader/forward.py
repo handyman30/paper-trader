@@ -118,6 +118,77 @@ def _stable_prices(px: dict, mkt="us") -> dict:
     return px
 
 
+def _intraday(tickers, day=None):
+    import yfinance as yf
+    raw = yf.download(sorted(tickers), period="5d" if day else "1d", interval="1m", progress=False, auto_adjust=True)
+    return raw
+
+
+def _apply_overrides(px, ov, tickers, m):
+    """Mid-session start: the first buys filled at the live price when the test was started, not at the open.
+    Completed day -> open = fill price, high/low taken from 1-min bars AFTER the fill time only.
+    Day still trading -> a provisional bar from the latest prices (never written to the snapshot)."""
+    day = pd.Timestamp(ov["date"])
+    t0 = pd.Timestamp(ov["fill_time_utc"])
+    px = {k: v.copy() for k, v in px.items()}
+    if day in px["close"].index:
+        try:
+            raw = _intraday(list(ov["prices"]), day)
+            after = raw[raw.index >= t0]
+        except Exception:
+            after = None
+        for t, price in ov["prices"].items():
+            c = px["close"].at[day, t]
+            hi = lo = None
+            if after is not None and len(after):
+                hi, lo = float(after["High"][t].max()), float(after["Low"][t].min())
+            px["open"].at[day, t] = price
+            px["high"].at[day, t] = max(price, c, hi if hi == hi and hi is not None else c)
+            px["low"].at[day, t] = min(price, c, lo if lo == lo and lo is not None else c)
+        return px, False
+    if day == pd.Timestamp.now(tz=m["tz"]).normalize().tz_localize(None):
+        try:
+            last = _intraday(tickers)["Close"].ffill().iloc[-1]
+        except Exception:
+            return px, False
+        row = {}
+        for f in ("open", "high", "low", "close"):
+            r = pd.Series(float("nan"), index=px[f].columns)
+            for t in px[f].columns:
+                lp = float(last.get(t, float("nan")))
+                if t in ov["prices"]:
+                    e = ov["prices"][t]
+                    r[t] = {"open": e, "high": max(e, lp), "low": min(e, lp), "close": lp}[f]
+                elif f == "close":
+                    r[t] = lp
+            row[f] = r
+        for f in px:
+            px[f] = pd.concat([px[f], row[f].to_frame(day).T])
+        return px, True
+    return px, False
+
+
+def start_now(name: str) -> dict:
+    """Start (or re-start) a test so its first buys fill at TODAY's live prices, mid-session."""
+    STATE = _p("state", name)
+    st = json.loads(STATE.read_text())
+    m = market(st["config"])
+    now = pd.Timestamp.now(tz=m["tz"])
+    st["first_session"] = str(now.normalize().tz_localize(None).date())
+    st["config"]["swing"]["start"] = st["first_session"]
+    st.pop("open_overrides", None)
+    STATE.write_text(json.dumps(st, indent=1, default=str))
+    out = update(name, verbose=False)  # today's bar isn't complete yet -> buys come out as "queued"
+    tick = [q.split()[1] for q in out["queued"] if q.startswith("BUY ")]
+    raw = _intraday(tick)["Close"].ffill()
+    last, ts = raw.iloc[-1], raw.index[-1]
+    st["open_overrides"] = dict(date=st["first_session"], fill_time_utc=ts.tz_convert("UTC").isoformat(),
+                                fill_time_local=ts.tz_convert(m["tz"]).strftime("%I:%M %p ") + m["zone"],
+                                prices={t: float(last[t]) for t in tick})
+    STATE.write_text(json.dumps(st, indent=1, default=str))
+    return update(name)
+
+
 def update(name="yours", verbose=True) -> dict | None:
     STATE, JOURNAL = _p("state", name), _p("journal", name)
     if not STATE.exists():
@@ -130,6 +201,9 @@ def update(name="yours", verbose=True) -> dict | None:
     m = market(cfg)
     px = _stable_prices(_complete_bars(load_daily(sorted(set(st["universe"]) | {bench}), warmup), m),
                         cfg.get("market", "us"))
+    provisional = False
+    if st.get("open_overrides"):
+        px, provisional = _apply_overrides(px, st["open_overrides"], st["universe"] + [bench], m)
     r = simulate(cfg, st["universe"], px, st["first_session"], close_at_end=False)
     eq, b, fees = r["equity"], r["bench"], r["fees_by_day"]
     start_cash = float(s["starting_cash"])
@@ -169,6 +243,8 @@ def update(name="yours", verbose=True) -> dict | None:
                bench=[(str(k.date()), float(v)) for k, v in b.items()],
                bench_close=float(px["close"][bench].dropna().iloc[-1]),
                fx_fee=float(fees.iloc[0]), cost_preset=s["costs"]["preset"], updated_utc=datetime.now(ZoneInfo("UTC")).isoformat())
+    out["provisional"] = provisional
+    out["open_overrides"] = st.get("open_overrides")
     out["readiness"] = readiness(out, cfg)
     JOURNAL.write_text(json.dumps(out, indent=1, default=str))
     if verbose:

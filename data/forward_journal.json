@@ -190,7 +190,9 @@
  "bench_close": 754.3699951171875,
  "fx_fee": 700.0,
  "cost_preset": "au_flat_fee",
- "updated_utc": "2026-11-16T01:22:06.096819+00:00",
+ "updated_utc": "2026-11-16T03:41:00.534981+00:00",
+ "provisional": false,
+ "open_overrides": null,
  "readiness": [
   {
    "day": 1,

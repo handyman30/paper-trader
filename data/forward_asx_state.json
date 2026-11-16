@@ -5,7 +5,7 @@
  "started_local": "Mon 16 Nov 2026, 12:21 PM AEDT",
  "started_et": "Mon 16 Nov 2026, 12:21 PM Sydney",
  "local_tz": "Australia/Melbourne",
- "first_session": "2026-11-17",
+ "first_session": "2026-11-16",
  "universe": [
   "EVN.AX",
   "PME.AX",
@@ -69,7 +69,7 @@
   "commission_per_share": 0.0,
   "db_path": "trader.db",
   "swing": {
-   "start": "2026-11-17",
+   "start": "2026-11-16",
    "starting_cash": 100000,
    "slippage_bps": 5,
    "monthly_target_pct": 1.0,
@@ -238,5 +238,18 @@
   },
   "market": "asx",
   "asx_rules": "yours"
+ },
+ "open_overrides": {
+  "date": "2026-11-16",
+  "fill_time_utc": "2026-11-16T03:20:00+00:00",
+  "fill_time_local": "02:20 PM Sydney",
+  "prices": {
+   "BHP.AX": 57.599998474121094,
+   "QBE.AX": 26.885000228881836,
+   "WDS.AX": 31.020000457763672,
+   "CPU.AX": 45.125,
+   "ALL.AX": 67.22000122070312,
+   "MPL.AX": 5.460000038146973
+  }
  }
 }
